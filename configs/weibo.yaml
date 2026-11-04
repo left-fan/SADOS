@@ -1,0 +1,77 @@
+seed: 42
+data:
+  name: weibo
+  raw_path: data/raw/weibo
+  standardize_features: true
+  make_undirected: true
+  remove_self_loops: false
+split:
+  strategy: cluster
+  seed: 42
+  num_clusters: 3
+  train_ratio: 0.6
+  val_ratio: 0.2
+  anomaly_source_ratio: 0.8
+  cluster_holdout: smallest
+  target_density: high
+model:
+  backbone: ghrn
+  hidden_channels: 64
+  out_channels: 2
+  num_layers: 2
+  dropout: 0.0
+ghrn:
+  baseline_epochs: 100
+  delete_ratio: 0.015
+  normalization: symmetric
+  preserve_undirected: true
+train:
+  epochs: 200
+  lr: 0.005
+  weight_decay: 0.00005
+  patience: 50
+  class_weight: true
+  monitor: val_auroc
+  log_every: 10
+tta:
+  epochs: 100
+  mode: single
+  lr: 0.00005
+  weight_decay: 0.0
+  initial_supervised_weight: 0.4
+  adapt_on: test
+  class_weight: false
+  clip_grad_norm: 5.0
+  log_every: 1
+  evaluate_every: 1
+  monitor: ""
+  report_metrics_after_fit: true
+  partition:
+    thresholds: [0.80, 0.60, 0.40, 0.20, 0.00]
+    calibration:
+      lambda_mi: 0.2
+      temperature: 0.2
+      normalize: minmax
+      chunk_size: 2048
+  prototype:
+    top_m: 64
+    semantic_mix_alpha: 0.5
+    ema_beta: 0.2
+    sharpness_gamma: 5.0
+    reliability_eta: 1.0
+  augmentation:
+    rho: 0.05
+    normal_label: 0
+    augment_only_normal: true
+  contrastive:
+    feature_noise_epsilon: 0.1
+    feature_scale: ones
+    edge_drop_prob: 0.2
+    temperature: 0.2
+    symmetric: false
+    max_nodes: 2048
+    negative_sample_size: 512
+    chunk_size: 512
+output:
+  checkpoint_dir: checkpoints/weibo
+  log_dir: logs/csv
