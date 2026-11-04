@@ -1,4 +1,4 @@
-# TTT_GHRN
+# SADOS
 
 This project combines the original GHRN graph backbone with the SADOS
 adaptation code from TTT1. The implementation is pure PyTorch and does not
